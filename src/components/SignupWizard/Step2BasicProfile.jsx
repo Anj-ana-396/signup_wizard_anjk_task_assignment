@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
-import { User, Calendar, AlertTriangle, AlertCircle, Heart, FileText, CheckCircle2, Sparkles } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { User, Calendar, AlertTriangle, AlertCircle, Sparkles } from 'lucide-react';
 import { PRONOUN_OPTIONS } from '../../data/mockData';
+import { updateStep2, nextStep, prevStep } from '../../store/signupWizardSlice';
+import { showToast } from '../../store/uiSlice';
 
-export default function Step2BasicProfile({ formData, setFormData, onNext, onBack, showToast }) {
+export default function Step2BasicProfile() {
+  const dispatch = useDispatch();
+  const formData = useSelector((state) => state.signupWizard.formData);
+
   const [fullName, setFullName] = useState(formData.fullName || '');
   const [dob, setDob] = useState(formData.dob || '');
   const [gender, setGender] = useState(formData.gender || 'Female');
@@ -80,27 +86,29 @@ export default function Step2BasicProfile({ formData, setFormData, onNext, onBac
     const isDobValid = validateDob(dob);
 
     if (!isNameValid || !isDobValid) {
-      showToast({
-        type: 'error',
-        title: 'Validation Error',
-        message: isUnderage
-          ? 'Registration blocked: Users under 18 cannot join Extroverts.'
-          : 'Please resolve the highlighted field errors.'
-      });
+      dispatch(
+        showToast({
+          type: 'error',
+          title: 'Validation Error',
+          message: isUnderage
+            ? 'Registration blocked: Users under 18 cannot join Extroverts.'
+            : 'Please resolve the highlighted field errors.'
+        })
+      );
       return;
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      fullName: fullName.trim(),
-      dob,
-      age: calculatedAge,
-      gender,
-      pronoun: pronoun === 'Custom' ? customPronoun.trim() || 'Custom' : pronoun,
-      bio: bio.trim()
-    }));
-
-    onNext();
+    dispatch(
+      updateStep2({
+        fullName: fullName.trim(),
+        dob,
+        age: calculatedAge,
+        gender,
+        pronoun: pronoun === 'Custom' ? customPronoun.trim() || 'Custom' : pronoun,
+        bio: bio.trim()
+      })
+    );
+    dispatch(nextStep());
   };
 
   return (
@@ -238,7 +246,7 @@ export default function Step2BasicProfile({ formData, setFormData, onNext, onBac
           <span className="text-[11px] text-slate-500">{bio.length}/160</span>
         </div>
         <div className="relative">
-          <FileText className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500" />
+          <User className="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500" />
           <textarea
             rows={3}
             maxLength={160}
@@ -254,7 +262,7 @@ export default function Step2BasicProfile({ formData, setFormData, onNext, onBac
       <div className="flex gap-3 pt-4">
         <button
           type="button"
-          onClick={onBack}
+          onClick={() => dispatch(prevStep())}
           className="w-1/3 py-4 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold text-sm rounded-2xl border border-slate-800 transition-colors"
         >
           Back

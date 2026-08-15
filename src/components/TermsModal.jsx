@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { X, ShieldCheck, FileText, CheckCircle, Search, Scroll } from 'lucide-react';
+import { setIsTermsOpen, showToast } from '../store/uiSlice';
+import { setAgreedTerms } from '../store/signupWizardSlice';
 
-export default function TermsModal({ isOpen, onClose, onAccept, isAccepted }) {
+export default function TermsModal() {
+  const dispatch = useDispatch();
+  const isTermsOpen = useSelector((state) => state.ui.isTermsOpen);
+  const agreedTerms = useSelector((state) => state.signupWizard.formData.agreedTerms);
+
   const [activeTab, setActiveTab] = useState('terms');
   const [searchTerm, setSearchTerm] = useState('');
 
-  if (!isOpen) return null;
+  if (!isTermsOpen) return null;
 
   const termsContent = [
     {
@@ -35,6 +42,18 @@ export default function TermsModal({ isOpen, onClose, onAccept, isAccepted }) {
     item.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleAccept = () => {
+    dispatch(setAgreedTerms(true));
+    dispatch(setIsTermsOpen(false));
+    dispatch(
+      showToast({
+        type: 'success',
+        title: 'Terms Accepted',
+        message: 'You have agreed to Extroverts Terms of Service & Privacy Policy.'
+      })
+    );
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
       <div className="relative w-full max-w-2xl bg-slate-900 border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
@@ -50,7 +69,7 @@ export default function TermsModal({ isOpen, onClose, onAccept, isAccepted }) {
             </div>
           </div>
           <button
-            onClick={onClose}
+            onClick={() => dispatch(setIsTermsOpen(false))}
             className="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -121,28 +140,23 @@ export default function TermsModal({ isOpen, onClose, onAccept, isAccepted }) {
         {/* Footer */}
         <div className="p-4 px-6 border-t border-slate-800 bg-slate-900 flex items-center justify-between gap-4">
           <div className="text-xs text-slate-400 flex items-center gap-2">
-            <CheckCircle className={`w-4 h-4 ${isAccepted ? 'text-emerald-400' : 'text-slate-600'}`} />
-            <span>{isAccepted ? 'Terms accepted for signup' : 'You must accept terms to submit profile'}</span>
+            <CheckCircle className={`w-4 h-4 ${agreedTerms ? 'text-emerald-400' : 'text-slate-600'}`} />
+            <span>{agreedTerms ? 'Terms accepted for signup' : 'You must accept terms to submit profile'}</span>
           </div>
 
           <div className="flex gap-2">
             <button
-              onClick={onClose}
+              onClick={() => dispatch(setIsTermsOpen(false))}
               className="px-4 py-2 text-xs font-semibold text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-xl transition-colors"
             >
               Close
             </button>
-            {onAccept && (
-              <button
-                onClick={() => {
-                  onAccept();
-                  onClose();
-                }}
-                className="px-5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl shadow-lg shadow-purple-600/30 transition-all flex items-center gap-1.5"
-              >
-                <CheckCircle className="w-4 h-4" /> Accept Terms
-              </button>
-            )}
+            <button
+              onClick={handleAccept}
+              className="px-5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-xl shadow-lg shadow-purple-600/30 transition-all flex items-center gap-1.5"
+            >
+              <CheckCircle className="w-4 h-4" /> Accept Terms
+            </button>
           </div>
         </div>
       </div>

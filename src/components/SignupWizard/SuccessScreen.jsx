@@ -1,12 +1,18 @@
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import confetti from 'canvas-confetti';
 import { 
-  CheckCircle2, PartyPopper, Sparkles, Download, RefreshCw, 
-  MapPin, GraduationCap, ShieldCheck, Flame, ArrowRight, QrCode
+  CheckCircle2, PartyPopper, Download, RefreshCw, 
+  MapPin, GraduationCap, ShieldCheck, QrCode
 } from 'lucide-react';
 import { VIBE_INTERESTS } from '../../data/mockData';
+import { resetWizard } from '../../store/signupWizardSlice';
+import { setActiveTab, showToast } from '../../store/uiSlice';
 
-export default function SuccessScreen({ formData, onResetWizard, onGoHome, showToast }) {
+export default function SuccessScreen() {
+  const dispatch = useDispatch();
+  const formData = useSelector((state) => state.signupWizard.formData);
+
   // Fire celebratory confetti on mount
   useEffect(() => {
     try {
@@ -38,11 +44,24 @@ export default function SuccessScreen({ formData, onResetWizard, onGoHome, showT
   const memberId = `EXT-${Math.floor(100000 + Math.random() * 900000)}`;
 
   const handleDownloadPass = () => {
-    showToast({
-      type: 'success',
-      title: 'Pass Downloaded!',
-      message: `Extroverts VIP Pass #${memberId} saved to downloads.`
-    });
+    dispatch(
+      showToast({
+        type: 'success',
+        title: 'Pass Downloaded!',
+        message: `Extroverts VIP Pass #${memberId} saved to downloads.`
+      })
+    );
+  };
+
+  const handleReset = () => {
+    dispatch(resetWizard());
+    dispatch(
+      showToast({
+        type: 'info',
+        title: 'Form Reset',
+        message: 'Signup wizard form has been reset for new entry.'
+      })
+    );
   };
 
   return (
@@ -149,7 +168,7 @@ export default function SuccessScreen({ formData, onResetWizard, onGoHome, showT
         </button>
 
         <button
-          onClick={onResetWizard}
+          onClick={handleReset}
           className="w-full sm:w-1/2 py-3.5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300 font-semibold text-sm rounded-2xl transition-all flex items-center justify-center gap-2"
         >
           <RefreshCw className="w-4 h-4 text-purple-400" /> Test Signup Again

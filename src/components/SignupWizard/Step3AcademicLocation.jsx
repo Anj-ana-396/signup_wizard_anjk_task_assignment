@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Building2, GraduationCap, AlertCircle, Sparkles, CheckCircle2, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { MapPin, Building2, GraduationCap, AlertCircle, Sparkles, ChevronRight } from 'lucide-react';
 import { STATES_AND_CITIES, ACADEMIC_YEARS } from '../../data/mockData';
+import { updateStep3, nextStep, prevStep } from '../../store/signupWizardSlice';
+import { showToast } from '../../store/uiSlice';
 
-export default function Step3AcademicLocation({ formData, setFormData, onNext, onBack, showToast }) {
+export default function Step3AcademicLocation() {
+  const dispatch = useDispatch();
+  const formData = useSelector((state) => state.signupWizard.formData);
+
   const [state, setState] = useState(formData.state || '');
   const [city, setCity] = useState(formData.city || '');
   const [college, setCollege] = useState(formData.college || '');
@@ -63,24 +69,26 @@ export default function Step3AcademicLocation({ formData, setFormData, onNext, o
     }
 
     if (!valid) {
-      showToast({
-        type: 'error',
-        title: 'Validation Error',
-        message: 'Please complete state, city, and college selection.'
-      });
+      dispatch(
+        showToast({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Please complete state, city, and college selection.'
+        })
+      );
       return;
     }
 
-    setFormData((prev) => ({
-      ...prev,
-      state,
-      city,
-      college: college === 'Other' ? customCollege.trim() : college,
-      customCollege: college === 'Other' ? customCollege.trim() : '',
-      academicYear
-    }));
-
-    onNext();
+    dispatch(
+      updateStep3({
+        state,
+        city,
+        college: college === 'Other' ? customCollege.trim() : college,
+        customCollege: college === 'Other' ? customCollege.trim() : '',
+        academicYear
+      })
+    );
+    dispatch(nextStep());
   };
 
   return (
@@ -247,7 +255,7 @@ export default function Step3AcademicLocation({ formData, setFormData, onNext, o
       <div className="flex gap-3 pt-4">
         <button
           type="button"
-          onClick={onBack}
+          onClick={() => dispatch(prevStep())}
           className="w-1/3 py-4 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold text-sm rounded-2xl border border-slate-800 transition-colors"
         >
           Back

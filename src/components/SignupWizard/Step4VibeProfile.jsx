@@ -1,27 +1,23 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { 
-  Sparkles, Flame, Image, CheckCircle, AlertCircle, RefreshCw, 
+  Sparkles, Flame, RefreshCw, 
   ShieldCheck, Edit3, ChevronDown, ChevronUp, UserCheck, ToggleLeft, ToggleRight
 } from 'lucide-react';
 import { VIBE_INTERESTS, AVATAR_PRESETS } from '../../data/mockData';
+import { updateStep4, prevStep, setStep, setIsCompleted } from '../../store/signupWizardSlice';
+import { showToast, setIsTermsOpen, toggleSimulateServerError } from '../../store/uiSlice';
 
-export default function Step4VibeProfile({ 
-  formData, 
-  setFormData, 
-  onComplete, 
-  onBack, 
-  onJumpToStep,
-  onOpenTerms, 
-  showToast 
-}) {
+export default function Step4VibeProfile() {
+  const dispatch = useDispatch();
+  const formData = useSelector((state) => state.signupWizard.formData);
+  const simulateServerError = useSelector((state) => state.ui.simulateServerError);
+
   const [avatar, setAvatar] = useState(formData.avatar || AVATAR_PRESETS[0].url);
   const [selectedVibes, setSelectedVibes] = useState(formData.selectedVibes || ['house_parties', 'techno_rave', 'rooftop_chill']);
   const [agreedTerms, setAgreedTerms] = useState(formData.agreedTerms || false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSummary, setShowSummary] = useState(true);
-
-  // Reviewer feature: toggle error simulation
-  const [simulateError, setSimulateError] = useState(false);
 
   // Toggle vibe selection
   const toggleVibe = (id) => {
@@ -37,21 +33,25 @@ export default function Step4VibeProfile({
     const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        showToast({
-          type: 'error',
-          title: 'Image Too Large',
-          message: 'Please choose a photo smaller than 5MB.'
-        });
+        dispatch(
+          showToast({
+            type: 'error',
+            title: 'Image Too Large',
+            message: 'Please choose a photo smaller than 5MB.'
+          })
+        );
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatar(reader.result);
-        showToast({
-          type: 'success',
-          title: 'Avatar Uploaded',
-          message: 'Custom profile photo updated successfully!'
-        });
+        dispatch(
+          showToast({
+            type: 'success',
+            title: 'Avatar Uploaded',
+            message: 'Custom profile photo updated successfully!'
+          })
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -62,20 +62,24 @@ export default function Step4VibeProfile({
     e.preventDefault();
 
     if (selectedVibes.length < 2) {
-      showToast({
-        type: 'error',
-        title: 'Vibe Selection Error',
-        message: 'Please select at least 2 vibe tags so we can calculate your Vibe Score.'
-      });
+      dispatch(
+        showToast({
+          type: 'error',
+          title: 'Vibe Selection Error',
+          message: 'Please select at least 2 vibe tags so we can calculate your Vibe Score.'
+        })
+      );
       return;
     }
 
     if (!agreedTerms) {
-      showToast({
-        type: 'warning',
-        title: 'Terms Agreement Required',
-        message: 'Please review and accept Extroverts Terms of Service to complete registration.'
-      });
+      dispatch(
+        showToast({
+          type: 'warning',
+          title: 'Terms Agreement Required',
+          message: 'Please review and accept Extroverts Terms of Service to complete registration.'
+        })
+      );
       return;
     }
 
@@ -85,28 +89,32 @@ export default function Step4VibeProfile({
     setTimeout(() => {
       setIsSubmitting(false);
 
-      if (simulateError) {
-        showToast({
-          type: 'error',
-          title: 'Server Error Simulated',
-          message: 'Network timeout during submission. (Toggle off "Simulate Server Failure" to succeed).'
-        });
+      if (simulateServerError) {
+        dispatch(
+          showToast({
+            type: 'error',
+            title: 'Server Error Simulated',
+            message: 'Network timeout during submission. (Toggle off "Simulate Server Failure" to succeed).'
+          })
+        );
       } else {
-        // Save final data
-        setFormData((prev) => ({
-          ...prev,
-          avatar,
-          selectedVibes,
-          agreedTerms
-        }));
+        // Save final data to Redux & complete
+        dispatch(
+          updateStep4({
+            avatar,
+            selectedVibes,
+            agreedTerms
+          })
+        );
+        dispatch(setIsCompleted(true));
 
-        showToast({
-          type: 'success',
-          title: '🎉 Registration Complete!',
-          message: 'Welcome to Extroverts! Your profile pass has been generated.'
-        });
-
-        onComplete();
+        dispatch(
+          showToast({
+            type: 'success',
+            title: '🎉 Registration Complete!',
+            message: 'Welcome to Extroverts! Your profile pass has been generated.'
+          })
+        );
       }
     }, 1600);
   };
@@ -211,7 +219,7 @@ export default function Step4VibeProfile({
         >
           <div className="flex items-center gap-2 font-bold text-sm text-slate-200">
             <UserCheck className="w-4 h-4 text-purple-400" />
-            <span>Profile Summary Review</span>
+            <span>Profile Summary Review (Redux State)</span>
           </div>
           {showSummary ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
         </button>
@@ -226,7 +234,7 @@ export default function Step4VibeProfile({
               </div>
               <button
                 type="button"
-                onClick={() => onJumpToStep(1)}
+                onClick={() => dispatch(setStep(1))}
                 className="px-2.5 py-1 text-[11px] font-semibold text-purple-300 bg-purple-950/80 hover:bg-purple-900 border border-purple-800 rounded-lg flex items-center gap-1"
               >
                 <Edit3 className="w-3 h-3" /> Edit
@@ -241,7 +249,7 @@ export default function Step4VibeProfile({
               </div>
               <button
                 type="button"
-                onClick={() => onJumpToStep(2)}
+                onClick={() => dispatch(setStep(2))}
                 className="px-2.5 py-1 text-[11px] font-semibold text-purple-300 bg-purple-950/80 hover:bg-purple-900 border border-purple-800 rounded-lg flex items-center gap-1"
               >
                 <Edit3 className="w-3 h-3" /> Edit
@@ -256,7 +264,7 @@ export default function Step4VibeProfile({
               </div>
               <button
                 type="button"
-                onClick={() => onJumpToStep(3)}
+                onClick={() => dispatch(setStep(3))}
                 className="px-2.5 py-1 text-[11px] font-semibold text-purple-300 bg-purple-950/80 hover:bg-purple-900 border border-purple-800 rounded-lg flex items-center gap-1"
               >
                 <Edit3 className="w-3 h-3" /> Edit
@@ -274,10 +282,10 @@ export default function Step4VibeProfile({
         </div>
         <button
           type="button"
-          onClick={() => setSimulateError(!simulateError)}
+          onClick={() => dispatch(toggleSimulateServerError())}
           className="flex items-center gap-1 text-slate-300 font-semibold"
         >
-          {simulateError ? (
+          {simulateServerError ? (
             <span className="text-rose-400 flex items-center gap-1 font-bold">
               <ToggleRight className="w-6 h-6 text-rose-500" /> Enabled (Will Error)
             </span>
@@ -302,7 +310,7 @@ export default function Step4VibeProfile({
             I agree to Extroverts{' '}
             <button
               type="button"
-              onClick={onOpenTerms}
+              onClick={() => dispatch(setIsTermsOpen(true))}
               className="text-purple-400 underline font-semibold hover:text-purple-300"
             >
               Terms of Service & Community Guidelines
@@ -316,7 +324,7 @@ export default function Step4VibeProfile({
       <div className="flex gap-3 pt-2">
         <button
           type="button"
-          onClick={onBack}
+          onClick={() => dispatch(prevStep())}
           disabled={isSubmitting}
           className="w-1/3 py-4 bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold text-sm rounded-2xl border border-slate-800 transition-colors"
         >

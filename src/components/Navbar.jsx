@@ -1,13 +1,31 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Sparkles, Smartphone, Monitor, ShieldCheck, UserPlus, RefreshCw, PartyPopper } from 'lucide-react';
+import { setActiveTab, setDeviceView, setIsTermsOpen, showToast } from '../store/uiSlice';
+import { resetWizard } from '../store/signupWizardSlice';
 
-export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceView, onOpenTerms, onResetWizard, currentStep }) {
+export default function Navbar() {
+  const dispatch = useDispatch();
+  const { activeTab, deviceView } = useSelector((state) => state.ui);
+  const { currentStep } = useSelector((state) => state.signupWizard);
+
+  const handleReset = () => {
+    dispatch(resetWizard());
+    dispatch(
+      showToast({
+        type: 'info',
+        title: 'Wizard Reset',
+        message: 'Signup wizard form state has been reset.'
+      })
+    );
+  };
+
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         {/* Brand Logo */}
         <div 
-          onClick={() => setActiveTab('landing')}
+          onClick={() => dispatch(setActiveTab('landing'))}
           className="flex items-center gap-3 cursor-pointer group"
         >
           <div className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 p-[1.5px] shadow-lg shadow-purple-500/25 group-hover:shadow-purple-500/50 transition-all duration-300">
@@ -21,7 +39,7 @@ export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceV
                 Extroverts
               </span>
               <span className="px-1.5 py-0.5 text-[10px] font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-md uppercase tracking-wider">
-                Vibe App
+                Redux Toolkit
               </span>
             </div>
             <span className="text-[10px] text-slate-400 font-medium tracking-tight">Party • Hangout • Campus</span>
@@ -31,7 +49,7 @@ export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceV
         {/* Center Nav Links */}
         <nav className="hidden md:flex items-center gap-1 bg-slate-900/60 p-1 rounded-xl border border-slate-800">
           <button
-            onClick={() => setActiveTab('landing')}
+            onClick={() => dispatch(setActiveTab('landing'))}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               activeTab === 'landing'
                 ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
@@ -41,7 +59,7 @@ export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceV
             Home Landing
           </button>
           <button
-            onClick={() => setActiveTab('wizard')}
+            onClick={() => dispatch(setActiveTab('wizard'))}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
               activeTab === 'wizard'
                 ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
@@ -52,7 +70,7 @@ export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceV
             Signup Wizard {currentStep > 1 && `(Step ${currentStep}/4)`}
           </button>
           <button
-            onClick={onOpenTerms}
+            onClick={() => dispatch(setIsTermsOpen(true))}
             className="px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-white hover:bg-slate-800/50 rounded-lg transition-all flex items-center gap-1"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
@@ -62,10 +80,10 @@ export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceV
 
         {/* Right Actions & Device Frame Toggle */}
         <div className="flex items-center gap-2">
-          {/* Device Frame View Toggle (Mobile App Preview vs Desktop Responsive) */}
+          {/* Device Frame View Toggle (Mobile App Shell View vs Desktop View) */}
           <div className="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5">
             <button
-              onClick={() => setDeviceView('mobile')}
+              onClick={() => dispatch(setDeviceView('mobile'))}
               title="Mobile Device Shell View"
               className={`p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs ${
                 deviceView === 'mobile'
@@ -77,7 +95,7 @@ export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceV
               <span className="hidden lg:inline text-[11px] font-medium">Mobile Shell</span>
             </button>
             <button
-              onClick={() => setDeviceView('full')}
+              onClick={() => dispatch(setDeviceView('full'))}
               title="Full Responsive View"
               className={`p-1.5 rounded-lg transition-colors flex items-center gap-1 text-xs ${
                 deviceView === 'full'
@@ -93,14 +111,14 @@ export default function Navbar({ activeTab, setActiveTab, deviceView, setDeviceV
           {/* Direct CTA */}
           {activeTab !== 'wizard' ? (
             <button
-              onClick={() => setActiveTab('wizard')}
+              onClick={() => dispatch(setActiveTab('wizard'))}
               className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40 transition-all duration-300 flex items-center gap-1.5"
             >
               <Sparkles className="w-4 h-4" /> Join Extroverts
             </button>
           ) : (
             <button
-              onClick={onResetWizard}
+              onClick={handleReset}
               title="Reset Wizard Form"
               className="px-3 py-1.5 text-xs text-slate-400 hover:text-rose-400 bg-slate-900 hover:bg-rose-950/30 border border-slate-800 hover:border-rose-900/50 rounded-xl transition-colors flex items-center gap-1"
             >

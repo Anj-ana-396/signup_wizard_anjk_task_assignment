@@ -1,11 +1,15 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { 
   Sparkles, PartyPopper, Users, Zap, ShieldCheck, ArrowRight, 
-  MapPin, CheckCircle, Flame, Music, Award, MessageSquare 
+  MapPin, Flame 
 } from 'lucide-react';
 import { VIBE_INTERESTS } from '../data/mockData';
+import { setActiveTab, setIsTermsOpen } from '../store/uiSlice';
 
-export default function LandingPage({ onStartSignup, onOpenTerms }) {
+export default function LandingPage() {
+  const dispatch = useDispatch();
+
   return (
     <div className="w-full text-slate-100 min-h-screen bg-slate-950 flex flex-col">
       {/* Hero Section */}
@@ -18,7 +22,7 @@ export default function LandingPage({ onStartSignup, onOpenTerms }) {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/60 border border-purple-500/30 text-xs font-semibold text-purple-300 mb-6 shadow-lg shadow-purple-500/10 animate-bounce">
             <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-            <span>Extroverts App Signup Wizard Replication • 100% Responsive</span>
+            <span>Extroverts App Signup Wizard • Redux Toolkit State Management</span>
           </div>
 
           {/* Main Headline */}
@@ -36,7 +40,7 @@ export default function LandingPage({ onStartSignup, onOpenTerms }) {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={onStartSignup}
+              onClick={() => dispatch(setActiveTab('wizard'))}
               className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-pink-500 text-white font-bold text-base rounded-2xl shadow-xl shadow-purple-600/30 hover:shadow-purple-600/50 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
             >
               <PartyPopper className="w-5 h-5" /> Launch 4-Step Signup Wizard
@@ -44,7 +48,7 @@ export default function LandingPage({ onStartSignup, onOpenTerms }) {
             </button>
 
             <button
-              onClick={onOpenTerms}
+              onClick={() => dispatch(setIsTermsOpen(true))}
               className="w-full sm:w-auto px-6 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-sm rounded-2xl transition-all flex items-center justify-center gap-2"
             >
               <ShieldCheck className="w-4 h-4 text-purple-400" /> Read Terms & Conditions
@@ -142,10 +146,10 @@ export default function LandingPage({ onStartSignup, onOpenTerms }) {
         <div className="max-w-3xl mx-auto p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-purple-950/70 via-slate-900 to-pink-950/50 border border-purple-500/30 shadow-2xl">
           <h2 className="text-3xl font-extrabold text-white mb-4">Ready to test the 4-Step Signup Wizard?</h2>
           <p className="text-slate-300 text-sm sm:text-base mb-8 max-w-lg mx-auto">
-            Experience complete form state management, real-time error toasts, back-navigation, and instant member pass generation.
+            Experience complete form state management with Redux Toolkit, real-time error toasts, back-navigation, and instant member pass generation.
           </p>
           <button
-            onClick={onStartSignup}
+            onClick={() => dispatch(setActiveTab('wizard'))}
             className="px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-amber-400 text-white font-bold rounded-2xl shadow-xl shadow-purple-600/30 hover:scale-105 transition-all text-base inline-flex items-center gap-2"
           >
             <PartyPopper className="w-5 h-5" /> Start Signup Wizard Now

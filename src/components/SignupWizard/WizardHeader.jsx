@@ -1,7 +1,19 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { ArrowLeft, Check, Sparkles } from 'lucide-react';
+import { prevStep } from '../../store/signupWizardSlice';
 
-export default function WizardHeader({ currentStep, totalSteps = 4, onBack, stepTitles }) {
+export default function WizardHeader() {
+  const dispatch = useDispatch();
+  const { currentStep, totalSteps } = useSelector((state) => state.signupWizard);
+
+  const stepTitles = [
+    'Account Verification',
+    'Personal Profile',
+    'Campus & City',
+    'Vibe & Submit'
+  ];
+
   const progressPercent = Math.round((currentStep / totalSteps) * 100);
 
   return (
@@ -12,7 +24,7 @@ export default function WizardHeader({ currentStep, totalSteps = 4, onBack, step
           <div className="flex items-center gap-3">
             {currentStep > 1 ? (
               <button
-                onClick={onBack}
+                onClick={() => dispatch(prevStep())}
                 className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700/60 flex items-center gap-1 text-xs font-semibold"
                 aria-label="Go back"
               >

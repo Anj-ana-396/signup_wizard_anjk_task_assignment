@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Mail, Phone, Lock, CheckCircle2, AlertCircle, RefreshCw, Send, ShieldCheck, Sparkles } from 'lucide-react';
+import { updateStep1, nextStep } from '../../store/signupWizardSlice';
+import { showToast } from '../../store/uiSlice';
 
-export default function Step1AccountVerification({ formData, setFormData, onNext, showToast }) {
+export default function Step1AccountVerification() {
+  const dispatch = useDispatch();
+  const formData = useSelector((state) => state.signupWizard.formData);
+
   const [email, setEmail] = useState(formData.email || '');
   const [phone, setPhone] = useState(formData.phone || '');
   const [otpDigits, setOtpDigits] = useState(formData.otpDigits || ['', '', '', '', '', '']);
@@ -73,11 +79,13 @@ export default function Step1AccountVerification({ formData, setFormData, onNext
     const isPhoneOk = validatePhone(phone);
 
     if (!isEmailOk || !isPhoneOk) {
-      showToast({
-        type: 'error',
-        title: 'Validation Error',
-        message: 'Please resolve email and phone number errors before requesting OTP.'
-      });
+      dispatch(
+        showToast({
+          type: 'error',
+          title: 'Validation Error',
+          message: 'Please resolve email and phone number errors before requesting OTP.'
+        })
+      );
       return;
     }
 
@@ -87,30 +95,29 @@ export default function Step1AccountVerification({ formData, setFormData, onNext
       setIsOtpSent(true);
       setTimer(30);
       setOtpError('');
-      showToast({
-        type: 'info',
-        title: '🔑 Demo OTP Code Sent!',
-        message: 'Your verification code is 123456. Enter it below to verify.',
-        duration: 8000
-      });
+      dispatch(
+        showToast({
+          type: 'info',
+          title: '🔑 Demo OTP Code Sent!',
+          message: 'Your verification code is 123456. Enter it below to verify.',
+          duration: 8000
+        })
+      );
     }, 1200);
   };
 
   // Handle OTP digit change (auto-focus next)
   const handleOtpChange = (index, value) => {
-    // Keep only numeric digit
     const digit = value.replace(/\D/g, '').slice(-1);
     const newOtp = [...otpDigits];
     newOtp[index] = digit;
     setOtpDigits(newOtp);
     setOtpError('');
 
-    // Auto focus next input if digit entered
     if (digit && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Auto verify if all 6 digits entered
     const fullOtp = newOtp.join('');
     if (fullOtp.length === 6) {
       verifyOtpCode(fullOtp);
@@ -144,23 +151,26 @@ export default function Step1AccountVerification({ formData, setFormData, onNext
 
   // Verify OTP code logic
   const verifyOtpCode = (code) => {
-    // Accepts demo code 123456 or any 6-digit number ending in non-zero
     if (code === '123456' || code.length === 6) {
       setIsOtpVerified(true);
       setOtpError('');
-      showToast({
-        type: 'success',
-        title: 'Account Verified!',
-        message: 'Email & Phone verification successful. You may proceed to Step 2.'
-      });
+      dispatch(
+        showToast({
+          type: 'success',
+          title: 'Account Verified!',
+          message: 'Email & Phone verification successful. You may proceed to Step 2.'
+        })
+      );
     } else {
       setIsOtpVerified(false);
       setOtpError('Invalid OTP code. Please use 123456 for demo verification.');
-      showToast({
-        type: 'error',
-        title: 'Verification Failed',
-        message: 'Invalid OTP code. Hint: Use 123456.'
-      });
+      dispatch(
+        showToast({
+          type: 'error',
+          title: 'Verification Failed',
+          message: 'Invalid OTP code. Hint: Use 123456.'
+        })
+      );
     }
   };
 
@@ -171,34 +181,38 @@ export default function Step1AccountVerification({ formData, setFormData, onNext
     const isPhoneOk = validatePhone(phone);
 
     if (!isEmailOk || !isPhoneOk) {
-      showToast({
-        type: 'error',
-        title: 'Form Error',
-        message: 'Please enter a valid email and 10-digit mobile phone number.'
-      });
+      dispatch(
+        showToast({
+          type: 'error',
+          title: 'Form Error',
+          message: 'Please enter a valid email and 10-digit mobile phone number.'
+        })
+      );
       return;
     }
 
     if (!isOtpVerified) {
-      showToast({
-        type: 'warning',
-        title: 'Verification Required',
-        message: 'Please send and verify the 6-digit OTP code before proceeding.'
-      });
+      dispatch(
+        showToast({
+          type: 'warning',
+          title: 'Verification Required',
+          message: 'Please send and verify the 6-digit OTP code before proceeding.'
+        })
+      );
       return;
     }
 
-    // Update parent state
-    setFormData((prev) => ({
-      ...prev,
-      email: email.trim(),
-      phone,
-      otpDigits,
-      isOtpSent,
-      isOtpVerified
-    }));
-
-    onNext();
+    // Save to Redux store & advance step
+    dispatch(
+      updateStep1({
+        email: email.trim(),
+        phone,
+        otpDigits,
+        isOtpSent,
+        isOtpVerified
+      })
+    );
+    dispatch(nextStep());
   };
 
   return (

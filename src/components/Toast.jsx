@@ -1,17 +1,22 @@
 import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { AlertCircle, CheckCircle2, Info, AlertTriangle, X } from 'lucide-react';
+import { hideToast } from '../store/uiSlice';
 
-export default function Toast({ toast, onClose }) {
-  if (!toast) return null;
+export default function Toast() {
+  const dispatch = useDispatch();
+  const toast = useSelector((state) => state.ui.toast);
 
   useEffect(() => {
-    if (toast.autoClose !== false) {
+    if (toast && toast.autoClose !== false) {
       const timer = setTimeout(() => {
-        onClose();
+        dispatch(hideToast());
       }, toast.duration || 4000);
       return () => clearTimeout(timer);
     }
-  }, [toast, onClose]);
+  }, [toast, dispatch]);
+
+  if (!toast) return null;
 
   const typeStyles = {
     error: {
@@ -48,7 +53,7 @@ export default function Toast({ toast, onClose }) {
           <p className="text-xs text-slate-300 leading-relaxed">{toast.message}</p>
         </div>
         <button
-          onClick={onClose}
+          onClick={() => dispatch(hideToast())}
           className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors"
           aria-label="Close notification"
         >

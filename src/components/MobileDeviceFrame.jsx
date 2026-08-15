@@ -1,12 +1,15 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
 import { Wifi, Battery, Signal, Smartphone } from 'lucide-react';
+import { setDeviceView } from '../store/uiSlice';
 
-export default function MobileDeviceFrame({ children, isMobileView, setDeviceView }) {
+export default function MobileDeviceFrame({ children, isMobileView }) {
+  const dispatch = useDispatch();
+
   if (!isMobileView) {
     return <div className="w-full min-h-[calc(100vh-4rem)]">{children}</div>;
   }
 
-  // Get current time formatted (e.g., 9:41)
   const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
@@ -16,8 +19,8 @@ export default function MobileDeviceFrame({ children, isMobileView, setDeviceVie
         <Smartphone className="w-3.5 h-3.5" />
         <span>Mobile App Frame Mode active</span>
         <button
-          onClick={() => setDeviceView('full')}
-          className="ml-2 underline font-semibold text-purple-200 hover:text-white"
+          onClick={() => dispatch(setDeviceView('full'))}
+          className="ml-2 underline font-semibold text-purple-200 hover:text-white cursor-pointer"
         >
           Switch to Full Screen
         </button>
