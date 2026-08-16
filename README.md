@@ -11,7 +11,11 @@ Built for the **Frontend Engineering Assessment**, this project implements moder
 
 ---
 
-## 📋 Assessment Requirement Mapping Matrix
+<img width="1920" height="1200" alt="Screenshot (248)" src="https://github.com/user-attachments/assets/4bdb7d30-c731-4494-910b-4bdd925fc9d7" />
+
+---
+
+##  Assessment Requirement Mapping Matrix
 
 | Requirement / Criteria | Implementation Detail | Target Source File |
 | :--- | :--- | :--- |
@@ -32,7 +36,7 @@ Built for the **Frontend Engineering Assessment**, this project implements moder
 
 ---
 
-## 🚀 Live Demo & Getting Started
+##  Live Demo & Getting Started
 
 ### Prerequisites
 - **Node.js**: v18.x or higher
@@ -63,7 +67,7 @@ Built for the **Frontend Engineering Assessment**, this project implements moder
 
 ---
 
-## 📦 State Management Architecture (Redux Toolkit)
+##  State Management Architecture (Redux Toolkit)
 
 The application utilizes **Redux Toolkit (`@reduxjs/toolkit` and `react-redux`)** for global, predictable, and maintainable state management across all 4 steps of the wizard and global UI overlays:
 
@@ -82,51 +86,42 @@ The application utilizes **Redux Toolkit (`@reduxjs/toolkit` and `react-redux`)*
 
 ---
 
-## 🌟 Key Features & Functional Requirements
+##  Key Features & Functional Requirements
 
-### 1. 📱 Landing Page & Responsive Viewport Simulator
+### 1.  Landing Page & Responsive Viewport Simulator
 - **Hero Banner**: Bold typography (Poppins), vibrant neon dark mode styling (`#0B0F19` slate background with purple/pink glassmorphism), micro stats counter, and quick CTA buttons.
 - **Mobile Shell Device View Toggle**: Click **"Mobile Shell"** on the top navigation bar to test the application framed within an interactive **iPhone Device Frame** with status bar, signal indicators, and notch, or switch back to **"Full Responsive"** view for standard desktop testing.
 
-### 2. 📜 Terms & Conditions Modal (`TermsModal.jsx`)
+### 2. Terms & Conditions Modal (`TermsModal.jsx`)
 - Accessible anytime from the navbar or step 4.
 - Features tabbed views (*Terms of Service*, *Safety Rules*), real-time search within terms, and an instant acceptance toggle integrated with Redux state.
+
+ <img width="1920" height="1200" alt="Screenshot (251)" src="https://github.com/user-attachments/assets/23380690-6c8f-424b-9894-b47b64bb9f95" />
 
 ### 3. 🧙‍♂️ 4-Step Signup Wizard (`SignupWizard/`)
 
 #### Step 1: Account Verification (`Step1AccountVerification.jsx`)
-- **Real-time Email Validation**: Regex check on-blur/on-change with clear error messages.
-- **Numeric-Only Phone Input**: Automatically strips non-numeric characters and enforces a 10-digit limit.
-- **Enhanced 6-Digit OTP UI**: Auto-focusing pin boxes, backspace keyboard navigation, paste handler (`123456`), 30-second resend countdown timer, demo OTP toast prompt (`Demo OTP: 123456`), and verified badge.
+
 
 #### Step 2: Basic Profile & Age Check (`Step2BasicProfile.jsx`)
-- **Full Name Validation**: Prevents whitespace-only entries, requires at least 2 alphabetic characters.
-- **Age Restriction Edge Case (<18 Handling)**: Automatically calculates exact age from Date of Birth. If the calculated age is **under 18**, a prominent **Age Limit Warning Banner** is shown, explaining that Extroverts is an 18+ platform, and form submission is disabled.
-- **Pronouns & Gender Selection**: Interactive pill selection (*He/Him, She/Her, They/Them, Ze/Zir, Custom*).
-- **Bio/Headline**: Character counter with a 160-character cap.
+
 
 #### Step 3: Campus & Location Cascading Selectors (`Step3AcademicLocation.jsx`)
-- **Cross-Field Cascading Logic**:
-  - Selecting a **State** dynamically filters available **Cities**.
-  - Selecting a **City** populates corresponding **Colleges & Universities**.
-  - Includes an `+ Other (Enter Custom College)` option that renders an inline custom university input.
-- **Academic Year Filter**: 1st Year (Freshman) to Senior / Alumni pills.
+
 
 #### Step 4: Vibe Profile & Submission Simulation (`Step4VibeProfile.jsx`)
-- **Profile Photo Picker**: Upload custom photo or pick from 6 curated preset avatars.
-- **Multi-Select Party Vibes**: Selectable grid of 10 vibe tags with icons (*House Parties, Techno Raves, Tech Startups, Board Games, etc.*).
-- **Collapsible Profile Summary Card**: Lists all entered data across Steps 1-3 from Redux store with quick inline **"Edit"** buttons to jump straight back to previous steps.
-- **Reviewer Option (Server Failure Simulation)**: Toggle to simulate network timeout error toast vs. successful completion scenario.
-- **Button Loading State**: Animated spinner on submit to prevent duplicate submissions.
 
-### 4. 🎟️ Success Screen & Digital VIP Pass (`SuccessScreen.jsx`)
-- Celebratory **canvas-confetti** explosion on completion.
-- Renders an **Extroverts VIP Digital Member Pass** card with a generated QR code, Member ID (`EXT-2026-XXXX`), user photo, college, city, age, and vibe tags.
-- Option to download the pass or reset the wizard to test again.
+### 4.  Success Screen & Digital VIP Pass (`SuccessScreen.jsx`)
 
----
+  <img width="1920" height="1200" alt="Screenshot (249)" src="https://github.com/user-attachments/assets/8a43012c-50a7-4bb8-8b46-1553ef372ea5" />
 
-## 📁 Project Structure
+ ---
+
+   <img width="1920" height="1200" alt="Screenshot (250)" src="https://github.com/user-attachments/assets/d7683752-01da-4f01-ae11-8a0653b431a4" />
+
+ ---
+
+##  Project Structure
 
 ```
 Signup_wizard_anjana_task_assignment/
@@ -160,7 +155,7 @@ Signup_wizard_anjana_task_assignment/
 
 ---
 
-## 🛠️ Technology Stack
+ Technology Stack
 
 - **Framework**: [React 19](https://react.dev/)
 - **State Management**: [Redux Toolkit](https://redux-toolkit.js.org/) (`@reduxjs/toolkit`, `react-redux`)
@@ -169,3 +164,7 @@ Signup_wizard_anjana_task_assignment/
 - **Animations & Effects**: [canvas-confetti](https://www.npmjs.com/package/canvas-confetti)
 - **Build Tool**: [Vite 6](https://vitejs.dev/)
 - **Typography**: Google Fonts — **Poppins**
+
+  ---
+
+
